@@ -1,413 +1,415 @@
-# Backlog de engenharia
+# Engineering backlog
 
-Origem: RideOps_Backlog_Engenharia.pdf, de 29/10/2026. Os identificadores locais RO-001 a RO-040 correspondem aos tickets RIDE-001 a RIDE-040 do documento, preservando sua numeração, dependências e critérios de aceite.
+Source: RideOps_Backlog_Engenharia.pdf, dated October 29, 2026. Local identifiers RO-001 through RO-040 correspond to tickets RIDE-001 through RIDE-040 in the source document, preserving their numbering, dependencies, and acceptance criteria.
 
-## Convenção de branches
+## Branch convention
 
-`roX/featyyy`: número do ticket sem zeros à esquerda + descrição curta da feature em minúsculas e hífens. Exemplo: RO-001 → `ro1/featdefinir-escopo`; RO-002 → `ro2/featcriar-monorepo`.
+`roX/featyyy`: the ticket number without leading zeros, followed by a short feature description in lowercase English with hyphens. Examples: RO-001 → `ro1/featdefine-scope`; RO-002 → `ro2/featcreate-monorepo`.
 
-## Progresso
+All project content, including commit messages, must be in English. Example commit message: `docs(ro1): define project scope and domain rules`.
 
-RO-001 concluído por revisão documental em PRODUCT.md. RO-002 é o próximo ticket. Todos os demais estão pendentes. A conclusão documental não indica implementação do MVP.
+## Progress
+
+RO-001 is complete following documentation review in PRODUCT.md. RO-002 is next. All other tickets are pending. Documentation completion does not mean the MVP is implemented.
 
 ## Tickets
 
-### RO-001 — Definir escopo e regras do domínio
+### RO-001 — Define scope and domain rules
 
-Prioridade: P0 · Tamanho: S · Dependências (números RO): -
+Priority: P0 · Size: S · Dependencies (RO numbers): -
 
-Escrever visão, termos do domínio, convenções de unidades, timezone e recortes do MVP.
+Write the vision, domain terms, unit conventions, timezone rules, and MVP boundaries.
 
-- [x] Um README/PRODUCT.md descreve MVP, fora de escopo e três fluxos principais.
-- [x] Distância é armazenada em metros; duração em segundos; instantes em UTC.
-- [x] Existe uma decisão explícita para métricas ausentes e passeios manuais.
+- [x] README/PRODUCT.md describes the MVP, exclusions, and three main flows.
+- [x] Distance is stored in meters, duration in seconds, and instants in UTC.
+- [x] There is an explicit decision for missing metrics and manual rides.
 
-### RO-002 — Criar monorepo TypeScript
+### RO-002 — Create the TypeScript monorepo
 
-Prioridade: P0 · Tamanho: M · Dependências (números RO): 001
+Priority: P0 · Size: M · Dependencies (RO numbers): 001
 
-Estruturar apps/web, apps/api e packages/shared com pnpm workspaces e scripts comuns.
+Set up apps/web, apps/api, and packages/shared with pnpm workspaces and common scripts.
 
-- [ ] Web e API sobem em modo desenvolvimento sem ajustes manuais obscuros.
-- [ ] Lint, typecheck e testes possuem comandos de workspace documentados.
-- [ ] Configurações de TS e aliases não criam dependência circular.
+- [ ] Web and API start in development mode without obscure manual adjustments.
+- [ ] Workspace commands for lint, typecheck, and tests are documented.
+- [ ] TypeScript configuration and aliases do not create circular dependencies.
 
-### RO-003 — Infra local com Docker Compose
+### RO-003 — Local infrastructure with Docker Compose
 
-Prioridade: P0 · Tamanho: S · Dependências (números RO): 002
+Priority: P0 · Size: S · Dependencies (RO numbers): 002
 
-Provisionar PostgreSQL com healthcheck e volumes persistentes; sem Redis nesta etapa.
+Provision PostgreSQL with a healthcheck and persistent volumes; no Redis at this stage.
 
-- [ ] docker compose up -d inicia o banco e informa health status.
-- [ ] Credenciais de exemplo ficam em .env.example, nunca no Git.
-- [ ] Migração e reset do banco estão documentados.
+- [ ] docker compose up -d starts the database and reports its health status.
+- [ ] Example credentials are provided in .env.example; real credentials are never committed to Git.
+- [ ] Database migration and reset procedures are documented.
 
-### RO-004 — Esqueleto NestJS + health endpoints
+### RO-004 — NestJS skeleton and health endpoints
 
-Prioridade: P0 · Tamanho: S · Dependências (números RO): 002,003
+Priority: P0 · Size: S · Dependencies (RO numbers): 002,003
 
-Criar API com validação global, configuração tipada e endpoints de liveness/readiness.
+Create the API with global validation, typed configuration, and liveness/readiness endpoints.
 
-- [ ] GET /health/live retorna 200 com processo saudável.
-- [ ] GET /health/ready falha corretamente se o banco estiver indisponível.
-- [ ] Um teste de integração cobre os dois casos.
+- [ ] GET /health/live returns 200 when the process is healthy.
+- [ ] GET /health/ready fails correctly when the database is unavailable.
+- [ ] An integration test covers both cases.
 
-### RO-005 — Pipeline CI e padronização
+### RO-005 — CI pipeline and standardization
 
-Prioridade: P1 · Tamanho: S · Dependências (números RO): 002,004
+Priority: P1 · Size: S · Dependencies (RO numbers): 002,004
 
-Configurar GitHub Actions para lint, typecheck, tests e build sem secrets reais.
+Configure GitHub Actions for lint, typecheck, tests, and build without real secrets.
 
-- [ ] PR quebrado falha na checagem automática.
-- [ ] README documenta os checks que precisam passar.
-- [ ] Commit hooks, se usados, não substituem CI.
+- [ ] A broken PR fails automated checks.
+- [ ] README documents the required checks.
+- [ ] Commit hooks, if used, do not replace CI.
 
-### RO-006 — Modelar User e Ride no PostgreSQL
+### RO-006 — Model User and Ride in PostgreSQL
 
-Prioridade: P0 · Tamanho: M · Dependências (números RO): 003,004
+Priority: P0 · Size: M · Dependencies (RO numbers): 003,004
 
-Criar migrations e entidades iniciais via Prisma; campos id, userId, source, título, início, distância, duração, ganho de elevação opcional, notas, timestamps.
+Create initial migrations and entities with Prisma, including id, userId, source, title, start time, distance, duration, optional elevation gain, notes, and timestamps.
 
-- [ ] FK Ride.userId impede pedal órfão.
-- [ ] Campos numéricos rejeitam negativos e valores incoerentes.
-- [ ] Migration up é reexecutável em um banco limpo via fluxo documentado.
+- [ ] The Ride.userId foreign key prevents orphaned rides.
+- [ ] Numeric fields reject negative and inconsistent values.
+- [ ] Migrations can be applied reproducibly to a clean database using the documented workflow.
 
-### RO-007 — Autenticação e sessão
+### RO-007 — Authentication and sessions
 
-Prioridade: P0 · Tamanho: L · Dependências (números RO): 006
+Priority: P0 · Size: L · Dependencies (RO numbers): 006
 
-Implementar cadastro, login, logout e GET /auth/me, com hashing de senha e sessão segura.
+Implement registration, login, logout, and GET /auth/me with password hashing and secure sessions.
 
-- [ ] Senhas nunca ficam em texto puro ou log.
-- [ ] Cookies de sessão usam HttpOnly, Secure em produção e política SameSite compatível.
-- [ ] Usuário não autenticado recebe 401 em rotas protegidas.
+- [ ] Passwords are never stored as plaintext or written to logs.
+- [ ] Session cookies use HttpOnly, Secure in production, and a compatible SameSite policy.
+- [ ] Unauthenticated users receive 401 on protected routes.
 
-### RO-008 — Autorização por proprietário
+### RO-008 — Ownership authorization
 
-Prioridade: P0 · Tamanho: S · Dependências (números RO): 007
+Priority: P0 · Size: S · Dependencies (RO numbers): 007
 
-Garantir isolamento de dados em leitura, escrita, exclusão e consultas agregadas.
+Ensure data isolation for reads, writes, deletions, and aggregate queries.
 
-- [ ] Usuário A não consulta, altera ou apaga pedal do usuário B.
-- [ ] Teste automatizado cobre tentativa de acesso por ID arbitrário.
-- [ ] Respostas não vazam dados privados nem revelam recursos de terceiros.
+- [ ] User A cannot read, modify, or delete user B's rides.
+- [ ] An automated test covers attempted access using an arbitrary ID.
+- [ ] Responses do not leak private data or reveal other users' resources.
 
-### RO-009 — CRUD REST de pedal manual
+### RO-009 — Manual ride REST CRUD
 
-Prioridade: P0 · Tamanho: M · Dependências (números RO): 006,007,008
+Priority: P0 · Size: M · Dependencies (RO numbers): 006,007,008
 
-Criar POST/GET/PATCH/DELETE /rides e GET /rides/:id com DTOs, filtros básicos e paginação.
+Create POST/GET/PATCH/DELETE /rides and GET /rides/:id with DTOs, basic filters, and pagination.
 
-- [ ] Cadastrar título, data, km e tempo produz unidade normalizada no banco.
-- [ ] GET /rides suporta page/limit e retorna ordem estável por data + id.
-- [ ] PATCH e DELETE validam autorização; payloads inválidos retornam 400.
+- [ ] Entering a title, date, kilometers, and duration produces normalized units in the database.
+- [ ] GET /rides supports page/limit and returns a stable order by date + id.
+- [ ] PATCH and DELETE validate authorization; invalid payloads return 400.
 
-### RO-010 — Telas de autenticação e shell do app
+### RO-010 — Authentication screens and application shell
 
-Prioridade: P0 · Tamanho: M · Dependências (números RO): 007
+Priority: P0 · Size: M · Dependencies (RO numbers): 007
 
-Configurar React + Vite + router + TanStack Query; criar login, cadastro e layout responsivo.
+Configure React, Vite, a router, and TanStack Query; create login, registration, and a responsive layout.
 
-- [ ] Usuário logado acessa rotas privadas; não logado é redirecionado.
-- [ ] Erros de API possuem feedback legível e estados loading/empty.
-- [ ] Mobile não tem overflow horizontal nas páginas centrais.
+- [ ] Authenticated users can access private routes; unauthenticated users are redirected.
+- [ ] API errors have readable feedback, and loading/empty states are provided.
+- [ ] Core pages have no horizontal overflow on mobile.
 
-### RO-011 — Criar, listar, detalhar e editar pedaladas
+### RO-011 — Create, list, view, and edit rides
 
-Prioridade: P0 · Tamanho: L · Dependências (números RO): 009,010
+Priority: P0 · Size: L · Dependencies (RO numbers): 009,010
 
-Implementar os formulários e lista de pedaladas, reaproveitando contratos tipados.
+Implement ride forms and lists, reusing typed contracts.
 
-- [ ] Formulário tem validação de data, distância e duração.
-- [ ] Após criar/editar, UI atualiza sem reload total.
-- [ ] Exclusão pede confirmação e permite lidar com falha do servidor.
+- [ ] Forms validate dates, distance, and duration.
+- [ ] After creating or editing a ride, the UI updates without a full reload.
+- [ ] Deletion requires confirmation and handles server failures.
 
-### RO-012 — Dados de demonstração e teste E2E básico
+### RO-012 — Demo data and a basic E2E test
 
-Prioridade: P1 · Tamanho: M · Dependências (números RO): 011
+Priority: P1 · Size: M · Dependencies (RO numbers): 011
 
-Criar seed determinístico e cenário de navegação Playwright.
+Create a deterministic seed and a Playwright navigation scenario.
 
-- [ ] Seed gera usuário de dev e 10 pedais com datas variadas sem dados pessoais reais.
-- [ ] E2E faz login, cria um pedal, visualiza e edita.
-- [ ] Suite roda em ambiente descartável, sem usar produção.
+- [ ] The seed creates a development user and 10 rides on different dates without real personal data.
+- [ ] The E2E test logs in, creates a ride, views it, and edits it.
+- [ ] The suite runs in a disposable environment, never against production.
 
-### RO-013 — Modelar Track, TrackPoint e Import
+### RO-013 — Model Track, TrackPoint, and Import
 
-Prioridade: P0 · Tamanho: M · Dependências (números RO): 006
+Priority: P0 · Size: M · Dependencies (RO numbers): 006
 
-Adicionar Track, TrackPoint e ImportRecord; guardar segmentos, sequência, checksum e status.
+Add Track, TrackPoint, and ImportRecord; store segments, sequence, checksum, and status.
 
-- [ ] Coordenadas ficam como lat/lon e sequência explícita, sem depender da ordenação implícita do banco.
-- [ ] Segmentos GPX diferentes não são ligados artificialmente.
-- [ ] Checksum é único por usuário quando import concluído.
+- [ ] Coordinates are stored as lat/lon with an explicit sequence, without relying on implicit database ordering.
+- [ ] Separate GPX segments are not artificially connected.
+- [ ] The checksum is unique per user for completed imports.
 
-### RO-014 — Endpoint seguro de upload GPX
+### RO-014 — Secure GPX upload endpoint
 
-Prioridade: P0 · Tamanho: M · Dependências (números RO): 013
+Priority: P0 · Size: M · Dependencies (RO numbers): 013
 
-Aceitar multipart GPX com limite inicial de 5 MB e limite configurável de pontos.
+Accept multipart GPX uploads with an initial 5 MB limit and a configurable point limit.
 
-- [ ] Rejeita extensão/MIME incompatível e XML malformado com erro amigável.
-- [ ] Implementação bloqueia entidades externas/XXE e trata arquivos excessivos.
-- [ ] Arquivo temporário é removido em sucesso e erro.
+- [ ] Incompatible extensions/MIME types and malformed XML are rejected with a friendly error.
+- [ ] The implementation blocks external entities/XXE and handles oversized files.
+- [ ] Temporary files are removed on both success and failure.
 
-### RO-015 — Parser GPX isolado da API
+### RO-015 — GPX parser independent of the API
 
-Prioridade: P0 · Tamanho: L · Dependências (números RO): 014
+Priority: P0 · Size: L · Dependencies (RO numbers): 014
 
-Criar serviço puro para ler trk/trkseg/trkpt, lat, lon, ele e time; suportar GPX válido com campos opcionais.
+Create a pure service to read trk/trkseg/trkpt, lat, lon, ele, and time; support valid GPX with optional fields.
 
-- [ ] Aceita GPX com e sem elevação; tempos ausentes geram duração null.
-- [ ] Descarta/rejeita coordenadas fora dos intervalos [-90,90] e [-180,180].
-- [ ] Testes usam fixtures pequenas, inclusive segmento vazio, timestamps inválidos e múltiplos segmentos.
+- [ ] GPX files with and without elevation are accepted; missing timestamps produce null duration.
+- [ ] Coordinates outside [-90,90] and [-180,180] are discarded or rejected.
+- [ ] Tests use small fixtures, including empty segments, invalid timestamps, and multiple segments.
 
-### RO-016 — Cálculo de métricas GPS
+### RO-016 — GPS metric calculations
 
-Prioridade: P0 · Tamanho: L · Dependências (números RO): 015
+Priority: P0 · Size: L · Dependencies (RO numbers): 015
 
-Calcular distância acumulada por Haversine, tempo decorrido e estatísticas básicas; não inventar moving time nesta fase.
+Calculate cumulative distance with Haversine, elapsed time, and basic statistics; do not invent moving time at this stage.
 
-- [ ] Distância não conecta saltos entre segmentos.
-- [ ] Tempo decorrido usa timestamps válidos; se insuficientes fica null.
-- [ ] Elevação ausente fica null; ganho só é exibido se houver regra documentada para ruído.
+- [ ] Distance calculations do not connect gaps between segments.
+- [ ] Elapsed time uses valid timestamps; insufficient timestamps produce null.
+- [ ] Missing elevation remains null; gain is displayed only when a noise-handling rule is documented.
 
-### RO-017 — Persistir importação e evitar duplicatas
+### RO-017 — Persist imports and prevent duplicates
 
-Prioridade: P0 · Tamanho: M · Dependências (números RO): 013,015,016
+Priority: P0 · Size: M · Dependencies (RO numbers): 013,015,016
 
-Executar ingestão transacional: registrar import, track, pontos e ride; registrar erros sem dados parciais.
+Perform transactional ingestion: record the import, track, points, and ride; record errors without leaving partial data.
 
-- [ ] Arquivo repetido pelo mesmo usuário não duplica pedalada.
-- [ ] Falha durante persistência não deixa ride parcialmente importada.
-- [ ] Response v1 documentada: 201 {importId, rideId, status: COMPLETED}.
+- [ ] Uploading the same file again as the same user does not duplicate the ride.
+- [ ] Persistence failures do not leave partially imported rides.
+- [ ] The v1 response is documented: 201 {importId, rideId, status: COMPLETED}.
 
-### RO-018 — UI de upload e estados de importação
+### RO-018 — Upload UI and import states
 
-Prioridade: P0 · Tamanho: M · Dependências (números RO): 014,017
+Priority: P0 · Size: M · Dependencies (RO numbers): 014,017
 
-Tela para arrastar/selecionar GPX, acompanhar processamento e navegar para pedal criado.
+Create a screen to drag or select a GPX file, follow processing, and navigate to the created ride.
 
-- [ ] Upload mostra formato e tamanho aceitos antes do envio.
-- [ ] Duplicata, dados inválidos e erro de servidor exibem mensagens distintas.
-- [ ] Sucesso leva a detalhes do pedal importado.
+- [ ] The upload UI shows accepted formats and size limits before submission.
+- [ ] Duplicates, invalid data, and server errors have distinct messages.
+- [ ] Success leads to the imported ride's details.
 
-### RO-019 — Visualizar trilha no mapa
+### RO-019 — Display tracks on a map
 
-Prioridade: P0 · Tamanho: L · Dependências (números RO): 013,017,018
+Priority: P0 · Size: L · Dependencies (RO numbers): 013,017,018
 
-Adicionar MapLibre/tiles com atribuição correta; desenhar segmentos e ajustar bounding box.
+Add MapLibre/tiles with correct attribution; draw segments and fit the bounding box.
 
-- [ ] Rota e start/end aparecem corretamente em GPX de teste.
-- [ ] Se rota estiver vazia, mapa não quebra.
-- [ ] Proveedor de tiles, limites e atribuição estão documentados; não abusar de servidores públicos.
+- [ ] The route and start/end points appear correctly for a test GPX file.
+- [ ] An empty route does not break the map.
+- [ ] The tile provider, limits, and attribution are documented; public servers are not abused.
 
-### RO-020 — Tela de detalhe com métricas e trajetória
+### RO-020 — Detail screen with metrics and route
 
-Prioridade: P0 · Tamanho: M · Dependências (números RO): 016,019
+Priority: P0 · Size: M · Dependencies (RO numbers): 016,019
 
-Exibir duração, distância, velocidade média quando calculável, ganho de elevação e mapa.
+Display duration, distance, average speed when calculable, elevation gain, and a map.
 
-- [ ] Unidades na UI seguem km/h, km, m; API mantém SI.
-- [ ] Campos ausentes mostram "não disponível", nunca zero inventado.
-- [ ] Resumo de atividade é consistente com resultados do backend.
+- [ ] UI units are km/h, km, and m; the API keeps SI units.
+- [ ] Missing fields display “not available”, never an invented zero.
+- [ ] The activity summary is consistent with backend results.
 
-### RO-021 — Suite de regressão de GPX
+### RO-021 — GPX regression suite
 
-Prioridade: P1 · Tamanho: M · Dependências (números RO): 015,016,017,020
+Priority: P1 · Size: M · Dependencies (RO numbers): 015,016,017,020
 
-Criar fixtures com trilha pequena, gaps, coordenadas inválidas, falta de elevação e duplicatas.
+Create fixtures with a short track, gaps, invalid coordinates, missing elevation, and duplicates.
 
-- [ ] Teste referencia distância aproximada conhecida e tolerância declarada.
-- [ ] Casos de arquivos maliciosos, muito grandes e repetidos falham com segurança.
-- [ ] E2E importa fixture e encontra rota no detalhe.
+- [ ] A test references a known approximate distance and an explicit tolerance.
+- [ ] Malicious, oversized, and repeated files fail safely.
+- [ ] An E2E test imports a fixture and finds the route in the detail view.
 
-### RO-022 — Agregados por período
+### RO-022 — Aggregates by period
 
-Prioridade: P0 · Tamanho: M · Dependências (números RO): 009,017
+Priority: P0 · Size: M · Dependencies (RO numbers): 009,017
 
-Criar GET /stats/summary?from=&to= com quilômetros, horas, atividades e elevação total conhecida.
+Create GET /stats/summary?from=&to= with kilometers, hours, activity count, and total known elevation gain.
 
-- [ ] Agregação filtra sempre por usuário e intervalo inclusivo/exclusivo documentado.
-- [ ] Dados ausentes não são somados como se fossem medições reais.
-- [ ] Testes cobrem períodos vazios e virada de mês.
+- [ ] Aggregation always filters by user and a documented inclusive/exclusive interval.
+- [ ] Missing data is not summed as if it were a real measurement.
+- [ ] Tests cover empty periods and month boundaries.
 
-### RO-023 — Dashboard responsivo
+### RO-023 — Responsive dashboard
 
-Prioridade: P0 · Tamanho: M · Dependências (números RO): 022
+Priority: P0 · Size: M · Dependencies (RO numbers): 022
 
-Cards com totais do mês, últimas atividades e gráfico semanal/mensal.
+Create cards with monthly totals, recent activities, and a weekly/monthly chart.
 
-- [ ] Dashboard usa dados reais da API e loading/empty/error states.
-- [ ] Gráficos possuem labels, unidades e são legíveis no mobile.
-- [ ] Seleção de período corresponde à consulta efetiva.
+- [ ] The dashboard uses real API data and provides loading/empty/error states.
+- [ ] Charts have labels and units and are readable on mobile.
+- [ ] The selected period matches the actual query.
 
-### RO-024 — Filtros e busca em pedaladas
+### RO-024 — Ride filters and search
 
-Prioridade: P1 · Tamanho: M · Dependências (números RO): 009,023
+Priority: P1 · Size: M · Dependencies (RO numbers): 009,023
 
-Permitir buscar título, filtrar origem (manual/GPX) e intervalo de datas.
+Support title search, source filters (manual/GPX), and date ranges.
 
-- [ ] Filtros funcionam combinados e no backend, antes da paginação.
-- [ ] URL preserva filtros ao recarregar ou compartilhar dentro da conta.
-- [ ] Consultas vazias mostram indicação clara.
+- [ ] Filters work together and are applied on the backend before pagination.
+- [ ] The URL preserves filters when reloading or sharing within the account.
+- [ ] Queries with no results show a clear indication.
 
-### RO-025 — Recordes pessoais básicos
+### RO-025 — Basic personal records
 
-Prioridade: P1 · Tamanho: M · Dependências (números RO): 022
+Priority: P1 · Size: M · Dependencies (RO numbers): 022
 
-Listar pedal mais longo, maior duração e maior distância em um mês.
+List the longest ride, greatest duration, and greatest distance in a month.
 
-- [ ] Empates têm critério estável de desempate.
-- [ ] Atividades sem duração não competem em recorde de tempo.
-- [ ] Cada recorde navega para o pedal correspondente.
+- [ ] Ties use a stable tiebreaker.
+- [ ] Activities without duration do not compete for duration records.
+- [ ] Each record links to the corresponding ride.
 
-### RO-026 — Testes de API e cobertura de autorização
+### RO-026 — API tests and authorization coverage
 
-Prioridade: P0 · Tamanho: M · Dependências (números RO): 008,017,022
+Priority: P0 · Size: M · Dependencies (RO numbers): 008,017,022
 
-Expandir suíte de integração para auth, propriedade, filtros, upload e agregação.
+Expand the integration suite to cover authentication, ownership, filters, uploads, and aggregation.
 
-- [ ] Testes rodam com banco de teste isolado e migrations reais.
-- [ ] Casos 400/401/403 ou 404 são previsíveis e documentados.
-- [ ] Uma execução limpa passa sem depender de ordem.
+- [ ] Tests run with an isolated test database and real migrations.
+- [ ] 400/401/403 or 404 responses are predictable and documented.
+- [ ] A clean run passes without depending on test order.
 
-### RO-027 — Política de privacidade e segurança
+### RO-027 — Privacy and security policy
 
-Prioridade: P0 · Tamanho: M · Dependências (números RO): 017,026
+Priority: P0 · Size: M · Dependencies (RO numbers): 017,026
 
-Todas as pedaladas são privadas por padrão; rever logs, upload, CSRF, rate limiting e vazamento de localização.
+All rides are private by default; review logs, uploads, CSRF, rate limiting, and location leaks.
 
-- [ ] Nenhuma rota pública devolve trilha ou coordenadas do usuário.
-- [ ] Tokens, senhas, conteúdo GPX e coordenadas não aparecem em logs normais.
-- [ ] Há limites de requisição para login e upload; threat model curto no repositório.
+- [ ] No public route returns a user's track or coordinates.
+- [ ] Tokens, passwords, GPX contents, and coordinates do not appear in normal logs.
+- [ ] Login and upload requests are rate-limited; the repository includes a short threat model.
 
-### RO-028 — Índices, paginação e medições
+### RO-028 — Indexes, pagination, and measurements
 
-Prioridade: P1 · Tamanho: M · Dependências (números RO): 024,026
+Priority: P1 · Size: M · Dependencies (RO numbers): 024,026
 
-Medir queries de listagem/agregados; adicionar índices comprovadamente úteis.
+Measure listing and aggregate queries; add indexes with demonstrated value.
 
-- [ ] EXPLAIN ou logs de consulta fundamentam a otimização.
-- [ ] Lista não retorna todos os pontos GPS por padrão.
-- [ ] Teste com dataset sintético grande identifica gargalos.
+- [ ] EXPLAIN output or query logs support the optimization.
+- [ ] Lists do not return all GPS points by default.
+- [ ] A test with a large synthetic dataset identifies bottlenecks.
 
-### RO-029 — Logs estruturados e erros consistentes
+### RO-029 — Structured logs and consistent errors
 
-Prioridade: P1 · Tamanho: M · Dependências (números RO): 026
+Priority: P1 · Size: M · Dependencies (RO numbers): 026
 
-Adicionar requestId, códigos de erro estáveis e logging redigido.
+Add requestId, stable error codes, and redacted logging.
 
-- [ ] Falha de import registra requestId/importId sem exibir dados sensíveis.
-- [ ] Frontend mapeia erro conhecido para mensagem clara.
-- [ ] Status de health não revela secrets nem stack trace.
+- [ ] Import failures log requestId/importId without exposing sensitive data.
+- [ ] The frontend maps known errors to clear messages.
+- [ ] Health status does not reveal secrets or stack traces.
 
-### RO-030 — Acessibilidade e estados extremos
+### RO-030 — Accessibility and edge states
 
-Prioridade: P1 · Tamanho: M · Dependências (números RO): 023,026
+Priority: P1 · Size: M · Dependencies (RO numbers): 023,026
 
-Auditar navegação por teclado, contraste, carregamento lento, dados ausentes e tabela extensa.
+Audit keyboard navigation, contrast, slow loading, missing data, and large tables.
 
-- [ ] Inputs têm label e erro acessível; modal de exclusão tem foco gerenciado.
-- [ ] UI não trava com 0 atividades ou duração desconhecida.
-- [ ] Mapa tem resumo textual alternativo das métricas da rota.
+- [ ] Inputs have accessible labels and errors; the deletion modal manages focus.
+- [ ] The UI does not crash with zero activities or unknown duration.
+- [ ] The map has an alternative text summary of route metrics.
 
-### RO-031 — Adicionar Redis, BullMQ e worker separado
+### RO-031 — Add Redis, BullMQ, and a separate worker
 
-Prioridade: P1 · Tamanho: L · Dependências (números RO): 017,029
+Priority: P1 · Size: L · Dependencies (RO numbers): 017,029
 
-Extrair parsing de GPX para um worker; API recebe arquivo e cria ImportRecord pendente.
+Extract GPX parsing into a worker; the API receives the file and creates a pending ImportRecord.
 
-- [ ] POST /imports/gpx passa a responder 202 {importId, status: QUEUED}.
-- [ ] Worker pode iniciar/parar separadamente da API.
-- [ ] Frontend continua funcionando com status assíncrono.
+- [ ] POST /imports/gpx now returns 202 {importId, status: QUEUED}.
+- [ ] The worker can start and stop independently of the API.
+- [ ] The frontend continues to work with asynchronous status updates.
 
-### RO-032 — Máquina de estados da importação
+### RO-032 — Import state machine
 
-Prioridade: P1 · Tamanho: M · Dependências (números RO): 031
+Priority: P1 · Size: M · Dependencies (RO numbers): 031
 
-Definir QUEUED, PROCESSING, COMPLETED, FAILED e GET /imports/:id; polling simples na UI.
+Define QUEUED, PROCESSING, COMPLETED, FAILED, and GET /imports/:id; add simple UI polling.
 
-- [ ] Estado só avança por transições válidas.
-- [ ] Polling cessa após sucesso/falha ou desmontagem do componente.
-- [ ] Um job com falha apresenta mensagem sanitizada e rastreável.
+- [ ] State advances only through valid transitions.
+- [ ] Polling stops after success/failure or component unmount.
+- [ ] A failed job displays a sanitized, traceable message.
 
-### RO-033 — Idempotência e retries de jobs
+### RO-033 — Job idempotency and retries
 
-Prioridade: P1 · Tamanho: L · Dependências (números RO): 031,032
+Priority: P1 · Size: L · Dependencies (RO numbers): 031,032
 
-Configurar retry com backoff, deduplicação por checksum e persistência atômica.
+Configure retries with backoff, checksum deduplication, and atomic persistence.
 
-- [ ] Mesmo arquivo/job repetido não gera duas Ride.
-- [ ] Erro transitório reprocessa; GPX inválido falha sem retry inútil.
-- [ ] Matar worker durante job não deixa dados inconsistentes.
+- [ ] Repeating the same file/job does not create two Ride records.
+- [ ] Transient errors are retried; invalid GPX fails without pointless retries.
+- [ ] Killing the worker during a job does not leave inconsistent data.
 
-### RO-034 — Falhas definitivas e reprocessamento
+### RO-034 — Terminal failures and reprocessing
 
-Prioridade: P1 · Tamanho: M · Dependências (números RO): 032,033
+Priority: P1 · Size: M · Dependencies (RO numbers): 032,033
 
-Registrar tentativas, erro terminal, retenção adequada e reprocessamento manual seguro.
+Record attempts and terminal errors, define appropriate retention, and support safe manual reprocessing.
 
-- [ ] Usuário vê status e pode reenviar importação falha sem duplicatas.
-- [ ] Admin/dev tem caminho documentado de inspeção de jobs mortos.
-- [ ] Não existem retries infinitos.
+- [ ] Users can view status and resubmit failed imports without duplicates.
+- [ ] Admins/developers have a documented way to inspect dead jobs.
+- [ ] Retries are never infinite.
 
-### RO-035 — Limites de concorrência e carga
+### RO-035 — Concurrency and load limits
 
-Prioridade: P2 · Tamanho: M · Dependências (números RO): 031,033
+Priority: P2 · Size: M · Dependencies (RO numbers): 031,033
 
-Benchmark com GPX grandes, concorrência configurável e restrições por usuário.
+Benchmark large GPX files with configurable concurrency and per-user restrictions.
 
-- [ ] Carga controlada não derruba API de CRUD.
-- [ ] Quantidade máxima de pontos/tamanho/tempo é explícita e testada.
-- [ ] Relatório curto documenta throughput e gargalo observado.
+- [ ] Controlled load does not bring down the CRUD API.
+- [ ] Maximum point count, file size, and processing time are explicit and tested.
+- [ ] A short report documents throughput and the observed bottleneck.
 
-### RO-036 — Deploy e ambiente de produção
+### RO-036 — Deployment and production environment
 
-Prioridade: P1 · Tamanho: L · Dependências (números RO): 027,029,031
+Priority: P1 · Size: L · Dependencies (RO numbers): 027,029,031
 
-Fazer deploy de web, API, worker e banco em serviços compatíveis, com HTTPS e secrets externos.
+Deploy the web app, API, worker, and database to compatible services with HTTPS and externally managed secrets.
 
-- [ ] Pipelines rodam migrações de maneira controlada.
-- [ ] Endpoints de health refletem dependências essenciais.
-- [ ] Importar GPX e ver mapa funciona em ambiente remoto.
+- [ ] Pipelines run migrations in a controlled manner.
+- [ ] Health endpoints reflect essential dependencies.
+- [ ] Importing GPX and viewing the map work in the remote environment.
 
-### RO-037 — Backup, restauração e documentação
+### RO-037 — Backup, restoration, and documentation
 
-Prioridade: P1 · Tamanho: M · Dependências (números RO): 036
+Priority: P1 · Size: M · Dependencies (RO numbers): 036
 
-Documentar arquitetura, runbooks, ADRs e teste de restauração do PostgreSQL.
+Document architecture, runbooks, ADRs, and a PostgreSQL restoration test.
 
-- [ ] Outro dev consegue subir projeto apenas com README e .env.example.
-- [ ] Backup de teste é restaurado e validado em ambiente isolado.
-- [ ] Existe diagrama de componentes e registro de decisões.
+- [ ] Another developer can start the project using only README and .env.example.
+- [ ] A test backup is restored and validated in an isolated environment.
+- [ ] A component diagram and decision records exist.
 
-### RO-038 — Gráfico de altitude e moving time
+### RO-038 — Elevation chart and moving time
 
-Prioridade: P2 · Tamanho: L · Dependências (números RO): 020,021
+Priority: P2 · Size: L · Dependencies (RO numbers): 020,021
 
-Adicionar perfil de altitude e algoritmo documentado para tempo em movimento, incluindo gaps e ruído.
+Add an elevation profile and a documented moving-time algorithm, including gap and noise handling.
 
-- [ ] Algoritmo tem limiares explícitos, não inventa tempo ausente.
-- [ ] Gráfico permite identificar ponto aproximado do percurso.
-- [ ] Fixture com pausa e ruído produz resultado dentro da tolerância.
+- [ ] The algorithm has explicit thresholds and does not invent missing time.
+- [ ] The chart lets users identify the approximate point along the route.
+- [ ] A fixture with a pause and noise produces a result within tolerance.
 
-### RO-039 — Metas e progressão semanal
+### RO-039 — Goals and weekly progress
 
-Prioridade: P2 · Tamanho: M · Dependências (números RO): 023,025
+Priority: P2 · Size: M · Dependencies (RO numbers): 023,025
 
-Definir meta mensal de distância, progresso e histórico visual.
+Define a monthly distance goal, progress, and visual history.
 
-- [ ] Metas são por usuário e não alteram métricas de atividades.
-- [ ] Mudança de meta atualiza progresso sem recalcular GPS.
-- [ ] Sem meta definida, dashboard não força dados falsos.
+- [ ] Goals belong to individual users and do not alter activity metrics.
+- [ ] Changing a goal updates progress without recalculating GPS data.
+- [ ] Without a goal, the dashboard does not fabricate data.
 
-### RO-040 — Exportação e portabilidade
+### RO-040 — Export and portability
 
-Prioridade: P2 · Tamanho: M · Dependências (números RO): 024,027
+Priority: P2 · Size: M · Dependencies (RO numbers): 024,027
 
-Exportar atividades do usuário em CSV e trilhas importadas em GPX quando suportado.
+Export the user's activities as CSV and imported tracks as GPX when supported.
 
-- [ ] CSV preserva cabeçalhos, unidades e timezone documentados.
-- [ ] Exportação requer autenticação e ownership.
-- [ ] Não inclui dados de outro usuário e limita volume.
+- [ ] CSV preserves documented headers, units, and timezone.
+- [ ] Export requires authentication and ownership.
+- [ ] Exports exclude other users' data and enforce volume limits.
