@@ -1,75 +1,75 @@
-# Produto: RideOps
+# Product: RideOps
 
-## Visão
+## Vision
 
-Um diário privado de ciclismo: registrar pedaladas e transformar arquivos GPX em trajetos e métricas confiáveis. O objetivo é um produto de portfólio que também seja útil no dia a dia.
+A private cycling journal for recording rides and turning GPX files into routes and reliable metrics. The goal is a portfolio project that is also useful in everyday life.
 
 ## MVP
 
-Um usuário consegue criar conta, entrar, registrar e editar um pedal manual, importar um GPX válido, visualizar seu trajeto e consultar totais por período. Nenhuma dessas ações permite acesso a dados de outro usuário.
+A user can create an account, sign in, record and edit a manual ride, import a valid GPX file, view its route, and query totals for a selected period. None of these actions grants access to another user's data.
 
-### Fluxos principais
+### Main flows
 
-1. **Pedal manual:** criar conta → entrar → cadastrar título, início e distância, com duração opcional → consultar histórico → editar ou excluir.
-2. **Importação:** selecionar GPX → validar → calcular métricas → persistir atividade e trilha → abrir detalhes com mapa. Arquivos inválidos geram erros previsíveis; duplicatas não criam outra atividade.
-3. **Evolução:** selecionar período → consultar distância, duração conhecida e quantidade de atividades → abrir um pedal do histórico.
+1. **Manual ride:** create an account → sign in → enter a title, start time, and distance, with optional duration → view history → edit or delete.
+2. **Import:** select a GPX file → validate → calculate metrics → persist the activity and track → open details with a map. Invalid files produce predictable errors; duplicates do not create another activity.
+3. **Progress:** select a period → view distance, known duration, and activity count → open a ride from history.
 
-## Termos do domínio
+## Domain terms
 
-- **Usuário:** proprietário de suas atividades, com email, senha protegida e timezone.
-- **Pedalada (Ride):** atividade de origem `MANUAL` ou `GPX`, pertencente a um único usuário.
-- **Trilha (Track):** sequência ordenada de pontos GPS associada a uma pedalada importada.
-- **Segmento:** conjunto contínuo de pontos no GPX; segmentos distintos não são conectados artificialmente.
-- **Importação:** registro do processamento de um arquivo, incluindo checksum, resultado e eventual erro.
+- **User:** the owner of their activities, with an email address, protected password, and timezone.
+- **Ride:** an activity with a `MANUAL` or `GPX` source, owned by exactly one user.
+- **Track:** an ordered sequence of GPS points associated with an imported ride.
+- **Segment:** a continuous set of points in a GPX file; separate segments are not artificially connected.
+- **Import:** a record of file processing, including its checksum, outcome, and any error.
 
-## Unidades, datas e métricas
+## Units, dates, and metrics
 
-- Banco e API usam metros para distância e elevação e segundos para duração. A interface converte distância para km e velocidade para km/h.
-- Instantes são persistidos em UTC. O timezone IANA do usuário orienta entrada e exibição de datas; o cadastro deverá capturar esse timezone.
-- Períodos são intervalos `[from, to)`: início inclusivo e fim exclusivo. Limites escolhidos em datas locais são convertidos para UTC antes da consulta.
-- Distância e demais medições numéricas devem ser finitas e não negativas.
-- Valor ausente é `null`, nunca zero inventado. A interface mostra “não disponível”. Zero representa uma medição conhecida igual a zero.
-- Pedais manuais exigem título não vazio, início e distância. Duração, ganho de elevação e notas são opcionais. Não possuem trilha GPS; métricas informadas pelo usuário não são apresentadas como calculadas por GPS.
-- Distância GPX é a soma de Haversine entre pontos consecutivos do mesmo segmento. Latitude fica em `[-90, 90]` e longitude em `[-180, 180]`.
-- Duração GPX representa tempo decorrido, não tempo em movimento. Sem timestamps suficientes e válidos, a duração é `null`; a política para timestamps inconsistentes será detalhada no parser.
-- Velocidade média é calculada somente quando distância e duração são conhecidas e duração é maior que zero. Tempo em movimento fica fora do MVP.
-- Sem elevação, ganho é `null`. Ganho calculado por GPS fica indisponível até existir filtro de ruído documentado e testado. Isso não impede informar ganho manualmente.
-- Totais somam apenas medições conhecidas. A interface distingue um total parcial de um total completo; um período com atividades sem nenhuma duração conhecida não exibe zero horas como medição. Um período sem atividades tem contagem e distância total zero.
+- The database and API use meters for distance and elevation, and seconds for duration. The UI converts distance to km and speed to km/h.
+- Instants are persisted in UTC. The user's IANA timezone governs date entry and display; registration must capture this timezone.
+- Periods use `[from, to)` intervals: inclusive start and exclusive end. Boundaries selected as local dates are converted to UTC before querying.
+- Distance and other numeric measurements must be finite and nonnegative.
+- A missing value is `null`, never an invented zero. The UI displays “not available”. Zero represents a known measurement equal to zero.
+- Manual rides require a nonempty title, start time, and distance. Duration, elevation gain, and notes are optional. They have no GPS track; user-entered metrics are not presented as GPS calculations.
+- GPX distance is the sum of Haversine distances between consecutive points within the same segment. Latitude must be within `[-90, 90]` and longitude within `[-180, 180]`.
+- GPX duration represents elapsed time, not moving time. Without enough valid timestamps, duration is `null`; the policy for inconsistent timestamps will be detailed in the parser.
+- Average speed is calculated only when distance and duration are known and duration is greater than zero. Moving time is outside the MVP.
+- Without elevation data, elevation gain is `null`. GPS-derived gain remains unavailable until a noise filter is documented and tested. This does not prevent users from entering gain manually.
+- Totals include only known measurements. The UI distinguishes partial totals from complete totals; a period containing activities with no known duration must not display zero hours as a measurement. A period with no activities has zero activity count and total distance.
 
-## Integridade e privacidade
+## Integrity and privacy
 
-- Todas as atividades são privadas. Leitura, alteração, exclusão, importação e agregações respeitam o proprietário.
-- O mesmo arquivo, identificado por SHA-256, não cria duas pedaladas para o mesmo usuário após importação concluída. Usuários diferentes podem importar o mesmo arquivo.
-- Persistência da atividade importada, trilha e pontos é transacional. Erros não deixam atividades parcialmente importadas.
-- Limite inicial de upload: 5 MB. Limite de pontos será configurável e definido no ticket de upload.
-- Senhas, tokens, conteúdo GPX e coordenadas não aparecem em logs normais.
+- All activities are private. Reads, updates, deletions, imports, and aggregations enforce ownership.
+- The same file, identified by SHA-256, must not create two rides for the same user after a completed import. Different users may import the same file.
+- Persistence of an imported activity, its track, and points is transactional. Errors must not leave partially imported activities.
+- Initial upload limit: 5 MB. The point limit will be configurable and defined in the upload ticket.
+- Passwords, tokens, GPX contents, and coordinates must not appear in normal logs.
 
-## Fora do MVP
+## Outside the MVP
 
-Feed social, seguidores, desafios, GPS ao vivo, integração automática com Strava/Garmin, IA, sensores, pagamentos e compartilhamento público de localização. Filas, worker, recordes, metas, moving time e exportação são evoluções posteriores.
+Social feeds, followers, challenges, live GPS recording, automatic Strava/Garmin integration, AI, sensors, payments, and public location sharing. Queues, workers, personal records, goals, moving time, and exports are later enhancements.
 
-## Critérios de pronto do MVP
+## MVP definition of done
 
-- Os três fluxos principais funcionam com dados persistidos e autenticação.
-- Um usuário não consulta nem modifica dados de outro, incluindo trilhas e agregados.
-- GPX válido produz rota e métricas coerentes; inválidos e duplicados têm tratamento verificável.
-- Ausência de métricas não é mascarada como zero; segmentos não são unidos no cálculo ou no mapa.
-- Telas centrais funcionam em mobile e apresentam carregamento, vazio e erro.
-- Testes cobrem regras centrais e fluxos essenciais; lint, typecheck e build passam.
+- All three main flows work with persisted data and authentication.
+- A user cannot read or modify another user's data, including tracks and aggregates.
+- Valid GPX files produce consistent routes and metrics; invalid and duplicate files have verifiable handling.
+- Missing metrics are not disguised as zeros; segments are not joined in calculations or on the map.
+- Core screens work on mobile and provide loading, empty, and error states.
+- Tests cover core rules and essential flows; lint, typecheck, and build pass.
 
-## Riscos e decisões futuras
+## Risks and future decisions
 
-- GPS ruidoso e timestamps incompletos: documentar políticas e testar fixtures no parser e cálculo de métricas.
-- Localização sensível: testar autorização por proprietário e evitar exposição em logs.
-- Timezone e virada de mês: testar limites de períodos nas agregações.
-- Provedor de mapas: selecionar antes do mapa, documentando atribuição, limites e custos.
-- Sessão, CSRF e hashing: decidir na implementação de autenticação, antes de disponibilizar rotas privadas.
-- Hospedagem e recuperação: decidir na fase de entrega, sem antecipar infraestrutura distribuída.
+- Noisy GPS data and incomplete timestamps: document policies and test fixtures in the parser and metric calculations.
+- Sensitive location data: test ownership authorization and prevent exposure in logs.
+- Timezones and month boundaries: test period boundaries in aggregations.
+- Map provider: select before implementing the map, documenting attribution, limits, and costs.
+- Sessions, CSRF, and hashing: decide during authentication implementation, before exposing private routes.
+- Hosting and recovery: decide during the delivery phase, without introducing distributed infrastructure early.
 
-## Verificação de RO-001
+## RO-001 verification
 
-- [x] MVP, fora de escopo e três fluxos principais descritos.
-- [x] Metros, segundos e UTC definidos explicitamente.
-- [x] Política de métricas ausentes e pedais manuais definida.
+- [x] MVP, exclusions, and three main flows are described.
+- [x] Meters, seconds, and UTC are explicitly defined.
+- [x] Policies for missing metrics and manual rides are defined.
 
-Validação: revisão documental dos três critérios. Testes automatizados não se aplicam a esta entrega; ainda não há código executável.
+Validation: documentation review of all three criteria. Automated tests do not apply to this delivery; there is no executable application code yet.

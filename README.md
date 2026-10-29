@@ -1,27 +1,31 @@
 # RideOps
 
-Plataforma privada para registrar pedaladas, importar GPX, visualizar trajetos e acompanhar a evolução.
+A private platform for recording bike rides, importing GPX files, viewing routes, and tracking progress.
 
-## Estado atual
+## Current status
 
-Projeto iniciado do zero. O ticket **RO-001 — Definir escopo e regras do domínio** está concluído na documentação. Ainda não há aplicação, dependências instaladas ou comandos de execução.
+The project started from an empty directory. **RO-001 — Define scope and domain rules** is complete at the documentation level. There is no application, installed dependencies, or run commands yet.
 
-- [Produto e regras do domínio](PRODUCT.md)
-- [Backlog e branches](docs/BACKLOG.md)
+- [Product and domain rules](PRODUCT.md)
+- [Backlog and branches](docs/BACKLOG.md)
 
-## Arquitetura planejada
+## Planned architecture
 
-- `apps/web`: React, Vite e TypeScript.
-- `apps/api`: NestJS e TypeScript, API REST por domínio.
-- `packages/shared`: contratos e tipos sem dependência de frameworks.
-- PostgreSQL e Prisma para persistência.
-- pnpm workspaces, Docker Compose e GitHub Actions para desenvolvimento e validação.
-- Worker, Redis e BullMQ somente na fase de importação assíncrona.
+- `apps/web`: React, Vite, and TypeScript.
+- `apps/api`: NestJS and TypeScript, with a REST API organized by domain.
+- `packages/shared`: framework-independent contracts and types.
+- PostgreSQL and Prisma for persistence.
+- pnpm workspaces, Docker Compose, and GitHub Actions for development and validation.
+- A worker, Redis, and BullMQ only during the asynchronous import phase.
 
-Esses componentes ainda não foram criados. O próximo ticket é **RO-002 — Criar monorepo TypeScript**.
+These components have not been created yet. The next ticket is **RO-002 — Create the TypeScript monorepo**.
 
-## Fluxo de trabalho
+## Workflow
 
-Branches seguem `roX/featyyy`: `X` é o número do ticket sem zeros à esquerda e `yyy` é uma descrição curta em minúsculas, separada por hífens. Exemplo: `ro1/featdefinir-escopo`.
+All project content must be in English, including code, comments, documentation, UI text, branch names, and commit messages.
 
-Cada entrega registra critérios de aceite e verificações executadas. Quando o monorepo existir, lint, typecheck, testes e build deverão passar antes da integração. Nesta etapa documental, esses comandos ainda não existem e não foram executados.
+Branches follow `roX/featyyy`: `X` is the ticket number without leading zeros, and `yyy` is a short lowercase description with words separated by hyphens. Example: `ro1/featdefine-scope`.
+
+Suggested commit format: `docs(ro1): define project scope and domain rules`.
+
+Each delivery records its acceptance criteria and completed checks. Once the monorepo exists, lint, typecheck, tests, and build must pass before integration. At this documentation stage, those commands do not exist and have not been run.
