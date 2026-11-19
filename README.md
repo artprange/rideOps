@@ -50,6 +50,16 @@ Start the applications in separate terminals:
 The web development server prints its URL in the terminal.
 The API runs at http://localhost:3000 by default.
 
+## Local database setup
+
+Copy `.env.example` to `.env` only when setting up a new environment. Keep an existing `.env` when restarting the project.
+
+Generate a local password with `openssl rand -hex 32`, then paste it into `POSTGRES_PASSWORD` in `.env`. Never put a working password in `.env.example` or commit `.env`. The example password is intentionally empty; Compose refuses to start until a password is provided.
+
+Start PostgreSQL with `docker compose up -d --wait`. Check its status with `docker compose ps`. The default host address is `127.0.0.1:5434`; the container listens on port `5432`.
+
+PostgreSQL stores its data in a named volume. Changing `.env` does not change the password of an already initialized database: rotate the database role password as well, then recreate the container to apply the updated environment. Recreating the container preserves the named volume.
+
 ## Verification
 
 Run all configured checks:
