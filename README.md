@@ -119,3 +119,15 @@ Configuration tests cover defaults, port conversion, invalid ports,
 and required settings.
 
 Real PostgreSQL availability, outage, and recovery were checked manually.
+
+## Continuous integration
+
+GitHub Actions runs `npm run check` on every pull request and on pushes
+to develop. The checks include lint, typecheck, unit tests, HTTP tests,
+and builds.
+
+CI uses disposable configuration without real credentials.
+Database behavior in automated health tests uses a mocked driver.
+
+Run `npm run check` locally before opening a pull request.
+Local hooks, if added, do not replace CI.
