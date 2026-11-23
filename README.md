@@ -131,3 +131,32 @@ Database behavior in automated health tests uses a mocked driver.
 
 Run `npm run check` locally before opening a pull request.
 Local hooks, if added, do not replace CI.
+
+## Database migrations
+
+Prisma defines User and Ride in apps/api/prisma/schema.prisma.
+
+Validate the schema:
+
+    npm run db:validate --workspace=apps/api
+
+Create a draft migration:
+
+    npm run db:migrate --workspace=apps/api -- --name describe_change --create-only
+
+Review the generated SQL before applying it:
+
+    npm run db:migrate --workspace=apps/api
+
+Apply committed migrations to a fresh environment:
+
+    npm exec --workspace=apps/api -- prisma migrate deploy --config prisma.config.ts
+
+Keep migration files in Git. Do not edit migrations already applied.
+
+The initial migration includes ownership and measurement constraints.
+Manual database checks verified orphan rejection, negative measurements,
+NaN rejection, nullable optional metrics, and owner-deletion restrictions.
+
+Migration replay was verified on a fresh temporary database.
+These database checks are not currently part of npm run check.
