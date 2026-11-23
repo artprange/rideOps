@@ -85,3 +85,37 @@ The frontend and shared package do not yet have test suites.
 
 The shared package must not import either application.
 Applications must not import each other's source files.
+
+## API health checks
+
+- GET /health/live returns 200 with {"status":"ok"} while the API can respond.
+  It does not query PostgreSQL.
+- GET /health/ready runs SELECT 1 against PostgreSQL.
+  It returns 200 with {"status":"ok"} on success, or 503 with
+  {"status":"unavailable"} on failure.
+
+Readiness recovers after PostgreSQL becomes available without restarting
+the API. Connection and query timeouts are configured separately at
+2 seconds each.
+
+## API configuration
+
+The API loads the repository-root .env file and validates settings at startup.
+
+- PORT defaults to 3000.
+- POSTGRES_HOST defaults to 127.0.0.1.
+- POSTGRES_PORT, POSTGRES_USER, POSTGRES_PASSWORD, and POSTGRES_DB are required.
+- Ports must be integers between 1 and 65535.
+- Configuration errors identify the setting without printing its value.
+
+Global request validation rejects undeclared properties on validated DTOs.
+
+## Health verification
+
+Automated HTTP tests cover readiness success, failure, recovery, and
+database-independent liveness using a mocked PostgreSQL driver.
+
+Configuration tests cover defaults, port conversion, invalid ports,
+and required settings.
+
+Real PostgreSQL availability, outage, and recovery were checked manually.
