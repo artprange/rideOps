@@ -5,6 +5,8 @@ import { HealthModule } from './health/health.module.js';
 import { ConfigModule } from '@nestjs/config';
 import { fileURLToPath } from 'url';
 import { validateEnvironment } from './config/environment.js';
+import { DatabaseModule } from './database/database.module.js';
+import { AuthModule } from './auth/auth.module.js';
 
 @Module({
   imports: [
@@ -15,6 +17,8 @@ import { validateEnvironment } from './config/environment.js';
       skipProcessEnv: true,
     }),
     HealthModule,
+    DatabaseModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
